@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NB Tutorial Service - Exam Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body class="bg-slate-900 text-white min-h-screen p-4 flex flex-col items-center">
+
+    <div class="w-full max-w-md bg-slate-800 rounded-2xl shadow-xl p-6 border border-slate-700 mt-2">
+        <!-- Branding Header -->
+        <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-700">
+            <div>
+                <h1 class="text-base font-bold text-amber-400">NB Tutorial Service</h1>
+                <p id="user-greeting" class="text-xs text-slate-400">Welcome, Student!</p>
+            </div>
+            <span class="bg-indigo-600 text-xs px-3 py-1 rounded-full font-bold text-white">Entrance & Highschool</span>
+        </div>
+
+        <!-- Question Section -->
+        <div id="quiz-container">
+            <h2 id="question-text" class="text-base font-semibold mb-4 text-slate-100">
+                Loading question...
+            </h2>
+            <div id="options-container" class="space-y-3"></div>
+        </div>
+
+        <!-- Explanation Box -->
+        <div id="explanation-box" class="hidden mt-6 p-4 rounded-xl bg-slate-900 border border-slate-700 text-sm">
+            <p class="font-bold text-amber-400 mb-1">💡 NB Tutorial Explanation:</p>
+            <p id="explanation-text" class="text-slate-300"></p>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            document.getElementById('user-greeting').innerText = `Student: ${tg.initDataUnsafe.user.first_name}`;
+        }
+
+        const sampleQuestion = {
+            question: "Which organelle is responsible for generating ATP through cellular respiration?",
+            options: [
+                { text: "A. Nucleus", correct: false },
+                { text: "B. Mitochondria", correct: true },
+                { text: "C. Ribosome", correct: false },
+                { text: "D. Golgi Body", correct: false }
+            ],
+            explanation: "Mitochondria produce ATP (energy) through cellular respiration. Remember this key term for your Entrance Exam! ⚡"
+        };
+
+        function loadQuestion() {
+            document.getElementById('question-text').innerText = sampleQuestion.question;
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            sampleQuestion.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-3 rounded-xl bg-slate-700 hover:bg-slate-600 transition font-medium border border-slate-600 text-sm";
+                btn.innerText = opt.text;
+                btn.onclick = () => checkAnswer(opt.correct, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(isCorrect, buttonElement) {
+            const buttons = document.getElementById('options-container').querySelectorAll('button');
+            buttons.forEach(b => b.disabled = true);
+
+            if (isCorrect) {
+                buttonElement.classList.remove('bg-slate-700', 'border-slate-600');
+                buttonElement.classList.add('bg-emerald-600', 'border-emerald-500');
+            } else {
+                buttonElement.classList.remove('bg-slate-700', 'border-slate-600');
+                buttonElement.classList.add('bg-rose-600', 'border-rose-500');
+            }
+
+            document.getElementById('explanation-text').innerText = sampleQuestion.explanation;
+            document.getElementById('explanation-box').classList.remove('hidden');
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
