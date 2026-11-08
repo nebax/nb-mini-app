@@ -11,7 +11,7 @@ from telegram.ext import (
 )
 
 # ⚠️ REPLACE THESE 3 VALUES WITH YOUR ACTUAL DATA
-BOT_TOKEN = "9245323400:AAGBP7OEdSVRdDFErwFxZQyJeeFu4LIXTbY"
+BOT_TOKEN = "9245323400:AAE-4eHLSm_0eBtodG7qP6Sz6DtTDWMGeg0"
 ADMIN_GROUP_ID = -1003871242942  # Your group ID from Step 1
 MINI_APP_URL = "https://your-app.vercel.app"  # Your Vercel URL from Step 2
 
