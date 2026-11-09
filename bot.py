@@ -118,5 +118,11 @@ if __name__ == "__main__":
     app.add_handler(CallbackQueryHandler(start, pattern="^back_start$"))
     app.add_handler(MessageHandler(filters.PHOTO, handle_screenshot))
 
-    print("NB Tutorial Bot is running...")
-    app.run_polling()
+PORT = int(os.environ.get("PORT", 10000))
+
+app.run_webhook(
+    listen="0.0.0.0",
+    port=PORT,
+    url_path=BOT_TOKEN,
+    webhook_url=f"https://nb-tutorial-bot.onrender.com/{BOT_TOKEN}"
+)
