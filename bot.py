@@ -80,10 +80,17 @@ async def admin_decision(update: Update, context: ContextTypes.DEFAULT_TYPE):
     action, user_id_str = query.data.split("_")
     user_id = int(user_id_str)
 
-    if action == "approve":
+if action == "approve":
+        approved_users.add(user_id)  # <--- CRITICAL: This grants them access!
+        
+        keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🚀 Open NB Exam Portal", web_app=WebAppInfo(url=MINI_APP_URL))]
+        ])
+        
         await context.bot.send_message(
             chat_id=user_id,
             text="🎉 **Payment Approved!** You now have full access to NB Tutorial Service Exam Portal. Click below to practice:",
+            reply_markup=keyboard,
             parse_mode="Markdown"
         )
         await query.edit_message_caption(caption=query.message.caption + "\n\n✅ APPROVED")
