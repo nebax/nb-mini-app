@@ -80,7 +80,7 @@ async def handle_screenshot(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     # Forward payment receipt to admin group and reply to user
     await context.bot.send_photo(
-        chat_id=YOUR_ADMIN_GROUP_ID,
+        chat_id=-1003871242942,
         photo=photo_file_id,
         caption=f"New Payment Submission\n\nUser: {user.full_name}\nUsername: @{user.username}\nID: {user.id}",
         reply_markup=InlineKeyboardMarkup(keyboard)
