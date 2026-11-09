@@ -65,7 +65,7 @@ async def payment_info(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "📸 **Next Step:** Take a clear screenshot of your payment receipt and send it directly into this chat."
     )
     keyboard = [[InlineKeyboardButton("⬅️ Back", callback_data="back_start")]]
-    await query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode="Markdown")
+    await query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(keyboard))
 
 async def handle_screenshot(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
@@ -74,8 +74,20 @@ async def handle_screenshot(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [
             InlineKeyboardButton("✅ Approve", callback_data=f"approve_{user.id}"),
-            InlineKeyboardButton("❌ Reject", callback_data=f"reject_{user.id}"),
+            InlineKeyboardButton("❌ Reject", callback_data=f"reject_{user.id}")
         ]
+    ]
+
+    # Forward photo to your Admin Group (replace YOUR_ADMIN_GROUP_ID with your actual group ID)
+    await context.bot.send_photo(
+        chat_id=YOUR_ADMIN_GROUP_ID,
+        photo=photo_file_id,
+        caption=f"New Payment Receipt\nUser: {user.full_name}\nUsername: @{user.username}\nID: {user.id}",
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
+
+    # Plain text reply to the user (NO parse_mode)
+    await update.message.reply_text("Your payment screenshot has been submitted! We will verify it shortly.")
     ]
     
     await context.bot.send_photo(
