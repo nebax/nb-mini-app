@@ -87,18 +87,14 @@ async def handle_screenshot(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     # Plain text reply to the user (NO parse_mode)
-    await update.message.reply_text("Your payment screenshot has been submitted! We will verify it shortly.")
-    ]
-    
-    await context.bot.send_photo(
-        chat_id=ADMIN_GROUP_ID,
-        photo=photo_file_id,
-        caption=f"📩 **New Payment Submission**\n\nUser: {user.full_name}\nUsername: @{user.username}\nID: `{user.id}`",
-        parse_mode="Markdown",
-        reply_markup=InlineKeyboardMarkup(keyboard),
-    )
+await context.bot.send_photo(
+    chat_id=ADMIN_GROUP_ID,
+    photo=photo_file_id,
+    caption=f"New Payment Submission\n\nUser: {user.full_name}\nUsername: @{user.username}\nID: {user.id}",
+    reply_markup=InlineKeyboardMarkup(keyboard)
+)
 
-    await update.message.reply_text("⏳ Screenshot received! Our admins are reviewing your receipt. Access will be activated shortly.")
+await update.message.reply_text("Your payment screenshot has been submitted! We will verify it shortly.")
 
 async def admin_decision(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
