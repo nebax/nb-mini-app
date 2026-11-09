@@ -100,14 +100,14 @@ async def admin_decision(update: Update, context: ContextTypes.DEFAULT_TYPE):
             text="🎉 **Payment Approved!** You now have full access to NB Tutorial Service Exam Portal. Click below to practice:",
             parse_mode="Markdown"
         )
-        await query.edit_message_caption(caption=query.message.caption + "\n\n✅ **APPROVED**", parse_mode="Markdown")
+        await query.edit_message_caption(caption=query.message.caption + "\n\n✅ APPROVED")
 
     elif action == "reject":
         await context.bot.send_message(
             chat_id=user_id,
             text="❌ Payment receipt rejected. Please make sure the transaction details are clear and re-submit."
         )
-        await query.edit_message_caption(caption=query.message.caption + "\n\n❌ **REJECTED**", parse_mode="Markdown")
+        await query.edit_message_caption(caption=query.message.caption + "\n\n❌ REJECTED")
 
 if __name__ == "__main__":
     app = ApplicationBuilder().token(BOT_TOKEN).build()
