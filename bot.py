@@ -98,7 +98,6 @@ async def admin_decision(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(
             chat_id=user_id,
             text="🎉 **Payment Approved!** You now have full access to NB Tutorial Service Exam Portal. Click below to practice:",
-            reply_markup=InlineKeyboardMarkup(keyboard),
             parse_mode="Markdown"
         )
         await query.edit_message_caption(caption=query.message.caption + "\n\n✅ **APPROVED**", parse_mode="Markdown")
