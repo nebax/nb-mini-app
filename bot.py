@@ -77,14 +77,14 @@ async def handle_screenshot(update: Update, context: ContextTypes.DEFAULT_TYPE):
             InlineKeyboardButton("❌ Reject", callback_data=f"reject_{user.id}")
         ]
     ]
-        # Forward payment receipt to admin group and reply to user
+    # Forward payment receipt to admin group and reply to user
         await context.bot.send_photo(
             chat_id=YOUR_ADMIN_GROUP_ID,
             photo=photo_file_id,
             caption=f"New Payment Submission\n\nUser: {user.full_name}\nUsername: @{user.username}\nID: {user.id}",
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
-        
+    
         await update.message.reply_text("Your payment screenshot has been submitted! We will verify it shortly.")
 async def admin_decision(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
