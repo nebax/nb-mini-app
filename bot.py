@@ -87,11 +87,10 @@ if action == "approve":
             [InlineKeyboardButton("🚀 Open NB Exam Portal", web_app=WebAppInfo(url=MINI_APP_URL))]
         ])
         
-        await context.bot.send_message(
+await context.bot.send_message(
             chat_id=user_id,
-            text="🎉 **Payment Approved!** You now have full access to NB Tutorial Service Exam Portal. Click below to practice:",
-            reply_markup=keyboard,
-            parse_mode="Markdown"
+            text="Payment Approved! You now have full access to NB Tutorial Service Exam Portal. Click below to practice:",
+            reply_markup=keyboard
         )
         await query.edit_message_caption(caption=query.message.caption + "\n\n✅ APPROVED")
 
