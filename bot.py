@@ -23,14 +23,14 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     
     if user_id in approved_users:
-        keyboard = [
+        keyboard = InlineKeyboardMarkup([
             [InlineKeyboardButton("🚀 Open NB Exam Portal", web_app=WebAppInfo(url=MINI_APP_URL))]
-        ]
+        ])
         text = "🎓 **Welcome back to NB Tutorial Service!**\n\nTap below to start practicing questions:"
     else:
-        keyboard = [
-            [InlineKeyboardButton("💳 Payment Info (CBE / Telebirr)", callback_data="pay_info")],
-        ]
+        keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("💳 Payment Info (CBE / Telebirr)", callback_data="pay_info")]
+        ])
         text = (
             "👋 **Welcome to NB Tutorial Service Exam Portal!**\n\n"
             "Unlock access to Grade 9–12 and Entrance Exam questions with detailed explanations.\n\n"
@@ -39,9 +39,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "2. Send a screenshot of your payment receipt directly to this chat."
         )
         
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text(text, reply_markup=reply_markup, parse_mode="Markdown")
-
+    await update.message.reply_text(text, reply_markup=keyboard, parse_mode="Markdown")
 async def payment_info(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
