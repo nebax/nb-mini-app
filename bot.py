@@ -84,14 +84,12 @@ if action == "approve":
         approved_users.add(user_id)
         from telegram import MenuButtonWebApp
         await context.bot.set_chat_menu_button(
-                    chat_id=user_id,
-                    menu_button=MenuButtonWebApp(text="NB Exam prep", web_app=WebAppInfo(url=MINI_APP_URL))
+            chat_id=user_id,
+            menu_button=MenuButtonWebApp(text="NB Exam prep", web_app=WebAppInfo(url=MINI_APP_URL))
         )
-        
         keyboard = InlineKeyboardMarkup([
             [InlineKeyboardButton("🚀 Open NB Exam Portal", web_app=WebAppInfo(url=MINI_APP_URL))]
         ])
-        
         await context.bot.send_message(
             chat_id=user_id,
             text="Payment Approved! You now have full access to NB Tutorial Service Exam Portal. Click below to practice:",
@@ -99,7 +97,7 @@ if action == "approve":
         )
         await query.edit_message_caption(caption=query.message.caption + "\n\n✅ APPROVED")
 
-        elif action == "reject":
+    elif action == "reject":
         await context.bot.send_message(
             chat_id=user_id,
             text="❌ Payment receipt rejected. Please make sure the transaction details are clear and re-submit."
