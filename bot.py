@@ -80,7 +80,7 @@ async def admin_decision(update: Update, context: ContextTypes.DEFAULT_TYPE):
     action, user_id_str = query.data.split("_")
     user_id = int(user_id_str)
 
-if action == "approve":
+    if action == "approve":
         approved_users.add(user_id)
         from telegram import MenuButtonWebApp
         await context.bot.set_chat_menu_button(
@@ -96,8 +96,8 @@ if action == "approve":
             reply_markup=keyboard
         )
         await query.edit_message_caption(caption=query.message.caption + "\n\n✅ APPROVED")
-
-elif action == "reject":
+    
+    elif action == "reject":
         await context.bot.send_message(
             chat_id=user_id,
             text="❌ Payment receipt rejected. Please make sure the transaction details are clear and re-submit."
