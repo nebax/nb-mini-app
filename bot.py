@@ -82,10 +82,10 @@ async def admin_decision(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 if action == "approve":
         approved_users.add(user_id)
-            from telegram import MenuButtonWebApp
+        from telegram import MenuButtonWebApp
         await context.bot.set_chat_menu_button(
-            chat_id=user_id,
-            menu_button=MenuButtonWebApp(text="NB Exam prep", web_app=WebAppInfo(url=MINI_APP_URL))
+                    chat_id=user_id,
+                    menu_button=MenuButtonWebApp(text="NB Exam prep", web_app=WebAppInfo(url=MINI_APP_URL))
         )
         
         keyboard = InlineKeyboardMarkup([
