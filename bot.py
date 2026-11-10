@@ -22,6 +22,13 @@ approved_users = set()
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     
+    if user_id not in approved_users:
+        from telegram import MenuButtonDefault
+        await context.bot.set_chat_menu_button(
+            chat_id=user_id,
+            menu_button=MenuButtonDefault()
+        )
+    
     if user_id in approved_users:
         keyboard = InlineKeyboardMarkup([
             [InlineKeyboardButton("🚀 Open NB Exam Portal", web_app=WebAppInfo(url=MINI_APP_URL))]
