@@ -97,7 +97,7 @@ if action == "approve":
         )
         await query.edit_message_caption(caption=query.message.caption + "\n\n✅ APPROVED")
 
-        elif action == "reject":
+elif action == "reject":
         await context.bot.send_message(
             chat_id=user_id,
             text="❌ Payment receipt rejected. Please make sure the transaction details are clear and re-submit."
