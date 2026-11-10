@@ -26,16 +26,16 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         keyboard = InlineKeyboardMarkup([
             [InlineKeyboardButton("🚀 Open NB Exam Portal", web_app=WebAppInfo(url=MINI_APP_URL))]
         ])
-        text = "🎓 **Welcome back to NB Tutorial Service!**\n\nTap below to start practicing questions:"
+        text = "🎓 Welcome back to NB Tutorial Service!\n\nTap below to start practicing questions:"
     else:
         keyboard = InlineKeyboardMarkup([
             [InlineKeyboardButton("💳 Payment Info (CBE / Telebirr)", callback_data="pay_info")]
         ])
         text = (
-            "👋 **Welcome to NB Tutorial Service Exam Portal!**\n\n"
-            "Unlock access to Grade 9–12 and Entrance Exam questions with detailed explanations.\n\n"
-            "**How to get access:**\n"
-            "1. Pay the subscription fee via Telebirr or CBE.\n"
+            "👋 Welcome to NB Tutorial Service Exam Portal!\n\n"
+             "Unlock access to Grade 9–12 and Entrance Exam questions with detailed explanations.\n\n"
+             "How to get access:\n"
+                "1. Pay the subscription fee via Telebirr or CBE.\n"
             "2. Send a screenshot of your payment receipt directly to this chat."
         )
         
@@ -82,6 +82,11 @@ async def admin_decision(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 if action == "approve":
         approved_users.add(user_id)
+            from telegram import MenuButtonWebApp
+        await context.bot.set_chat_menu_button(
+            chat_id=user_id,
+            menu_button=MenuButtonWebApp(text="NB Exam prep", web_app=WebAppInfo(url=MINI_APP_URL))
+        )
         
         keyboard = InlineKeyboardMarkup([
             [InlineKeyboardButton("🚀 Open NB Exam Portal", web_app=WebAppInfo(url=MINI_APP_URL))]
