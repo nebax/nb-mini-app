@@ -25,7 +25,6 @@ def run_web():
 # --- Telegram Bot Command & Callback Handlers ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
-        [InlineKeyboardButton("📘 Grade 8 Ministry", callback_data="select_grade_8")],
         [InlineKeyboardButton("📗 Grade 9 Student", callback_data="select_grade_9")],
         [InlineKeyboardButton("📙 Grade 10 Student", callback_data="select_grade_10")],
         [InlineKeyboardButton("🧪 Grade 11 Natural Science", callback_data="select_grade_11_nat")],
@@ -62,9 +61,6 @@ async def grade_selection(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif selected_grade == "grade_9":
         price = "150 ETB"
         access_info = "Access to Grade 9 General Package"
-    elif selected_grade == "grade_8":
-        price = "150 ETB"
-        access_info = "Grade 8 Ministry Exam Prep Questions"
     else:
         price = "Standard"
         access_info = f"Access to {selected_grade.replace('_', ' ').title()} Package"
