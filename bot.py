@@ -167,6 +167,10 @@ if __name__ == "__main__":
     threading.Thread(target=run_web).start()
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
+    # Clear old webhooks automatically on startup
+    import asyncio
+    asyncio.run(app.bot.delete_webhook(drop_pending_updates=True))
+
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(grade_selection, pattern="^select_"))
     app.add_handler(CallbackQueryHandler(payment_info, pattern="^pay_info$"))
