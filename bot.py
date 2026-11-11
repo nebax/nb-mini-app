@@ -13,7 +13,7 @@ def run_web():
     web_app.run(host="0.0.0.0", port=10000)
     
 BOT_TOKEN = "9245323400:AAG3tuluyobP_Y04ACkdzEQnH5V4jGQPn54"
-ADMIN_GROUP_ID = -100387124942
+ADMIN_GROUP_ID = -1003871242942
 MINI_APP_URL = "https://nb-mini-app.vercel.app"
 
 # Storage
