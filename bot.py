@@ -144,7 +144,7 @@ async def admin_decision(update: Update, context: ContextTypes.DEFAULT_TYPE):
         package_name = pending_selections.get(target_user_id, "Selected Package")
         approved_users[target_user_id] = package_name
         
-        # Notify student
+        # 1. Notify the student (this part succeeds)
         portal_keyboard = InlineKeyboardMarkup([
             [InlineKeyboardButton("🚀 Open NB Exam Portal", web_app=WebAppInfo(url=MINI_APP_URL))]
         ])
@@ -154,14 +154,16 @@ async def admin_decision(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=portal_keyboard,
             parse_mode="Markdown"
         )
-        await query.message.edit_caption(caption=query.message.caption + "\n\n✅ **APPROVED**", parse_mode="Markdown")
+        
+        # 2. Update the group message safely without Markdown parsing errors
+        await query.message.edit_caption(caption=query.message.caption + "\n\n✅ APPROVED")
         
     elif action == "reject":
         await context.bot.send_message(
             chat_id=target_user_id,
             text="❌ **Payment Rejected.** Your receipt could not be verified. Please contact support or re-submit a clear screenshot."
         )
-        await query.message.edit_caption(caption=query.message.caption + "\n\n❌ **REJECTED**", parse_mode="Markdown")
+        await query.message.edit_caption(caption=query.message.caption + "\n\n❌ REJECTED")
 
 # --- Main Initialization ---
 if __name__ == "__main__":
