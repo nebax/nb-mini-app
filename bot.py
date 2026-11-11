@@ -1,6 +1,17 @@
+import threading
+from flask import Flask
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, MenuButtonWebApp, MenuButtonDefault, WebAppInfo
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, MessageHandler, filters, ContextTypes
 
+web_app = Flask(__name__)
+
+@web_app.route('/')
+def home():
+    return "Bot is alive!"
+
+def run_web():
+    web_app.run(host="0.0.0.0", port=10000)
+    
 BOT_TOKEN = "9245323400:AAE-4eHLSm_0eBtodG7qp6Sz6DtTDWMGeg0"
 ADMIN_GROUP_ID = -100387124942
 MINI_APP_URL = "https://nb-mini-app.vercel.app"
@@ -153,6 +164,7 @@ async def admin_decision(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_caption(caption=query.message.caption + "\n\n❌ REJECTED")
 
 if __name__ == "__main__":
+    threading.Thread(target=run_web).start()
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
