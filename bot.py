@@ -146,9 +146,9 @@ async def admin_decision(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ])
         await context.bot.send_message(
             chat_id=target_user_id,
-            text=f"🎉 **Payment Approved!** You now have full access to **{package_name}**.\n\nClick below to start practicing:",
+            text=f"🎉 <b>Payment Approved!</b> You now have full access to <b>{package_name}</b>.\n\nClick below to start practicing:",
             reply_markup=portal_keyboard,
-            parse_mode="Markdown"
+            parse_mode="HTML"
         )
         
         # 2. Update the group message safely without Markdown parsing errors
