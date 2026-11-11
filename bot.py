@@ -115,19 +115,19 @@ async def handle_screenshot(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ]
     ])
     
+    # Using plain text caption (no parse_mode) to prevent Markdown parsing errors
     caption = (
-        f"🔔 **New Payment Verification Request!**\n\n"
-        f"👤 **User:** {user.full_name} (@{user.username or 'None'})\n"
-        f"🆔 **User ID:** `{user_id}`\n"
-        f"📦 **Requested Package:** {package}"
+        "🔔 New Payment Verification Request!\n\n"
+        f"👤 User: {user.full_name} (@{user.username or 'None'})\n"
+        f"🆔 User ID: {user_id}\n"
+        f"📦 Requested Package: {package}"
     )
     
     await context.bot.send_photo(
         chat_id=ADMIN_GROUP_ID,
         photo=update.message.photo[-1].file_id,
         caption=caption,
-        reply_markup=keyboard,
-        parse_mode="Markdown"
+        reply_markup=keyboard
     )
     
     await update.message.reply_text("✅ Your payment screenshot has been submitted! We will verify it shortly.")
