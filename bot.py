@@ -164,12 +164,11 @@ async def admin_decision(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_caption(caption=query.message.caption + "\n\n❌ REJECTED")
 
 if __name__ == "__main__":
+    # Start Flask server in a background thread for Render's port requirement
     threading.Thread(target=run_web).start()
-    app = ApplicationBuilder().token(BOT_TOKEN).build()
 
-    # Clear old webhooks automatically on startup
-    import asyncio
-    asyncio.run(app.bot.delete_webhook(drop_pending_updates=True))
+    # Start Telegram Bot
+    app = ApplicationBuilder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(grade_selection, pattern="^select_"))
