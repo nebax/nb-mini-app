@@ -2,88 +2,606 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NB Tutorial Service - Exam Portal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NB Tutorial Service</title>
+    <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-</head>
-<body class="bg-slate-900 text-white min-h-screen p-4 flex flex-col items-center">
-
-    <div class="w-full max-w-md bg-slate-800 rounded-2xl shadow-xl p-6 border border-slate-700 mt-2">
-        <!-- Branding Header -->
-        <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-700">
-            <div>
-                <h1 class="text-base font-bold text-amber-400">NB Tutorial Service</h1>
-                <p id="user-greeting" class="text-xs text-slate-400">Welcome, Student!</p>
-            </div>
-            <span class="bg-indigo-600 text-xs px-3 py-1 rounded-full font-bold text-white">Entrance & Highschool</span>
-        </div>
-
-        <!-- Question Section -->
-        <div id="quiz-container">
-            <h2 id="question-text" class="text-base font-semibold mb-4 text-slate-100">
-                Loading question...
-            </h2>
-            <div id="options-container" class="space-y-3"></div>
-        </div>
-
-        <!-- Explanation Box -->
-        <div id="explanation-box" class="hidden mt-6 p-4 rounded-xl bg-slate-900 border border-slate-700 text-sm">
-            <p class="font-bold text-amber-400 mb-1">💡 NB Tutorial Explanation:</p>
-            <p id="explanation-text" class="text-slate-300"></p>
-        </div>
-    </div>
-
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            document.getElementById('user-greeting').innerText = `Student: ${tg.initDataUnsafe.user.first_name}`;
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-dark: #1e293b;
+            --border-dark: #334155;
+            --accent-blue: #3b82f6;
+            --accent-hover: #2563eb;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --correct-bg: rgba(34, 197, 94, 0.15);
+            --correct-border: #22c55e;
+            --correct-text: #4ade80;
+            --wrong-bg: rgba(239, 68, 68, 0.15);
+            --wrong-border: #ef4444;
+            --wrong-text: #f87171;
         }
 
-        const sampleQuestion = {
-            question: "Which organelle is responsible for generating ATP through cellular respiration?",
-            options: [
-                { text: "A. Nucleus", correct: false },
-                { text: "B. Mitochondria", correct: true },
-                { text: "C. Ribosome", correct: false },
-                { text: "D. Golgi Body", correct: false }
-            ],
-            explanation: "Mitochondria produce ATP (energy) through cellular respiration. Remember this key term for your Entrance Exam! ⚡"
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-h: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+            user-select: none;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Glass / Card Elements */
+        .card {
+            background-color: var(--card-dark);
+            border: 1px solid var(--border-dark);
+            border-radius: 16px;
+            padding: 16px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-clickable {
+            cursor: pointer;
+        }
+
+        .card-clickable:active {
+            transform: scale(0.98);
+            border-color: var(--accent-blue);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: #ffffff;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 20px;
+            width: 100%;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: opacity 0.2s;
+        }
+
+        .btn-primary:active {
+            opacity: 0.9;
+        }
+
+        .nav-back {
+            background: transparent;
+            border: none;
+            color: var(--accent-blue);
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            padding: 6px 0;
+            margin-bottom: 12px;
+        }
+
+        .badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-natural { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .badge-social { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+        /* Question Options Styling */
+        .option-card {
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-dark);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .option-key {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            background: var(--border-dark);
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .option-card.correct {
+            background-color: var(--correct-bg);
+            border-color: var(--correct-border);
+            color: var(--correct-text);
+        }
+
+        .option-card.correct .option-key {
+            background-color: var(--correct-border);
+            color: #000000;
+        }
+
+        .option-card.wrong {
+            background-color: var(--wrong-bg);
+            border-color: var(--wrong-border);
+            color: var(--wrong-text);
+        }
+
+        .option-card.wrong .option-key {
+            background-color: var(--wrong-border);
+            color: #ffffff;
+        }
+
+        .explanation-box {
+            background-color: rgba(30, 41, 59, 0.9);
+            border-left: 4px solid var(--accent-blue);
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-top: 14px;
+            font-size: 13px;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- APP BRANDING HEADER -->
+        <header style="text-align: center; margin-bottom: 16px;">
+            <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; color: white; font-size: 22px; margin-bottom: 8px; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);">
+                <i class="fa-solid fa-book-bookmark"></i>
+            </div>
+            <h1 style="font-size: 20px; font-weight: 800; letter-spacing: -0.5px; color: #ffffff;">NB Tutorial Service</h1>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Ethiopian Curriculum & Entrance Exam Hub</p>
+        </header>
+
+        <!-- STEP BREADCRUMB / BACK BUTTON -->
+        <div id="nav-header" class="hidden">
+            <button class="nav-back" onclick="handleBack()"><i class="fa-solid fa-arrow-left"></i> <span id="back-text">Back</span></button>
+        </div>
+
+        <!-- ================= STEP 1: HOME SCREEN (GRADE SELECTION) ================= -->
+        <section id="screen-home">
+            <p style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 0.5px;">Select Grade & Stream</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <!-- Grade 9 -->
+                <div class="card card-clickable" onclick="navigateToGrade('G9')">
+                    <div style="font-size: 11px; color: var(--accent-blue); font-weight: 700;">GENERAL</div>
+                    <div style="font-size: 18px; font-weight: 800; margin: 4px 0;">Grade 9</div>
+                    <div style="font-size: 11px; color: var(--text-muted);"><i class="fa-solid fa-layer-group"></i> 12 Subjects</div>
+                </div>
+
+                <!-- Grade 10 -->
+                <div class="card card-clickable" onclick="navigateToGrade('G10')">
+                    <div style="font-size: 11px; color: var(--accent-blue); font-weight: 700;">GENERAL</div>
+                    <div style="font-size: 18px; font-weight: 800; margin: 4px 0;">Grade 10</div>
+                    <div style="font-size: 11px; color: var(--text-muted);"><i class="fa-solid fa-layer-group"></i> 10 Subjects</div>
+                </div>
+
+                <!-- Grade 11 Natural -->
+                <div class="card card-clickable" onclick="navigateToGrade('G11_NAT')">
+                    <span class="badge badge-natural">Natural</span>
+                    <div style="font-size: 18px; font-weight: 800; margin: 6px 0 4px 0;">Grade 11</div>
+                    <div style="font-size: 11px; color: var(--text-muted);"><i class="fa-solid fa-flask"></i> 4 Core Subjects</div>
+                </div>
+
+                <!-- Grade 11 Social -->
+                <div class="card card-clickable" onclick="navigateToGrade('G11_SOC')">
+                    <span class="badge badge-social">Social</span>
+                    <div style="font-size: 18px; font-weight: 800; margin: 6px 0 4px 0;">Grade 11</div>
+                    <div style="font-size: 11px; color: var(--text-muted);"><i class="fa-solid fa-landmark"></i> 5 Core Subjects</div>
+                </div>
+
+                <!-- Grade 12 Natural Entrance -->
+                <div class="card card-clickable" style="border-color: rgba(59, 130, 246, 0.4);" onclick="navigateToGrade('G12_NAT')">
+                    <span class="badge badge-natural">Entrance Exam</span>
+                    <div style="font-size: 18px; font-weight: 800; margin: 6px 0 4px 0; color: #60a5fa;">Grade 12</div>
+                    <div style="font-size: 11px; color: var(--text-muted);"><i class="fa-solid fa-graduation-cap"></i> Natural Stream</div>
+                </div>
+
+                <!-- Grade 12 Social Entrance -->
+                <div class="card card-clickable" style="border-color: rgba(245, 158, 11, 0.4);" onclick="navigateToGrade('G12_SOC')">
+                    <span class="badge badge-social">Entrance Exam</span>
+                    <div style="font-size: 18px; font-weight: 800; margin: 6px 0 4px 0; color: #fbbf24;">Grade 12</div>
+                    <div style="font-size: 11px; color: var(--text-muted);"><i class="fa-solid fa-graduation-cap"></i> Social Stream</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= STEP 2: SUBJECT SELECTION ================= -->
+        <section id="screen-subjects" class="hidden">
+            <h2 id="subject-screen-title" style="font-size: 16px; font-weight: 800; margin-bottom: 4px;">Choose Subject</h2>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">Select a subject to view available topics and questions</p>
+            <div id="subject-grid" style="display: flex; flex-direction: column; gap: 10px;"></div>
+        </section>
+
+        <!-- ================= STEP 3A: UNITS SELECTION (GRADES 9-11) ================= -->
+        <section id="screen-units" class="hidden">
+            <h2 id="unit-screen-title" style="font-size: 16px; font-weight: 800; margin-bottom: 4px;">Select Unit</h2>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">Practice test questions for each specific unit</p>
+            <div id="unit-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
+        </section>
+
+        <!-- ================= STEP 3B: ENTRANCE EXAM YEARS (GRADE 12) ================= -->
+        <section id="screen-years" class="hidden">
+            <h2 id="year-screen-title" style="font-size: 16px; font-weight: 800; margin-bottom: 4px;">Select Entrance Exam Year</h2>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">Official past national matriculation exam papers</p>
+            <div id="year-list" style="display: flex; flex-direction: column; gap: 12px;"></div>
+        </section>
+
+        <!-- ================= STEP 4: QUIZ PLAYER ================= -->
+        <section id="screen-quiz" class="hidden" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <!-- Quiz Meta -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <span id="quiz-badge-label" class="badge badge-natural">Grade 9 • Mathematics</span>
+                    <span id="q-counter" style="font-size: 12px; font-weight: 700; color: var(--text-muted);">Question 1 of 3</span>
+                </div>
+
+                <!-- Question Container -->
+                <div class="card" style="margin-bottom: 14px;">
+                    <h3 id="question-text" style="font-size: 15px; font-weight: 700; line-height: 1.4;">Loading question...</h3>
+                </div>
+
+                <!-- Options List -->
+                <div id="options-container"></div>
+
+                <!-- Explanation Box -->
+                <div id="explanation-box" class="explanation-box hidden">
+                    <strong style="color: var(--accent-blue); display: block; margin-bottom: 4px;"><i class="fa-solid fa-circle-info"></i> Explanation:</strong>
+                    <span id="explanation-text"></span>
+                </div>
+            </div>
+
+            <button id="next-btn" class="btn-primary hidden" onclick="handleNextQuestion()" style="margin-top: 16px;">
+                <span>Next Question</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </section>
+
+        <!-- ================= STEP 5: RESULTS SUMMARY ================= -->
+        <section id="screen-results" class="hidden" style="text-align: center; margin: auto 0; padding: 20px 0;">
+            <div style="width: 72px; height: 72px; border-radius: 50%; background: rgba(59, 130, 246, 0.15); border: 2px solid var(--accent-blue); color: var(--accent-blue); display: inline-flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 16px;">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+            <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 4px;">Test Completed!</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Great job completing your practice questions</p>
+
+            <div class="card" style="margin-bottom: 20px; padding: 20px;">
+                <div id="results-score" style="font-size: 36px; font-weight: 800; color: var(--accent-blue);">0 / 3</div>
+                <div id="results-percent" style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-top: 4px;">0% Accuracy</div>
+            </div>
+
+            <button class="btn-primary" onclick="resetToHome()">
+                <i class="fa-solid fa-house"></i>
+                <span>Return to Home</span>
+            </button>
+        </section>
+
+    </div>
+
+    <!-- MAIN APP SCRIPT & SYLLABUS DATABASE -->
+    <script>
+        // Telegram WebApp Initialization
+        let tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+
+        // Application State
+        let currentFlow = ""; // 'GRADE' or 'ENTRANCE'
+        let selectedGradeKey = "";
+        let selectedSubject = null;
+        let selectedUnitOrYear = null;
+        let currentQuestions = [];
+        let currentQIndex = 0;
+        let userScore = 0;
+        let optionSelected = false;
+
+        // BREADCRUMB HISTORY STACK
+        let historyStack = ['screen-home'];
+
+        // GENERIC QUESTION GENERATOR FOR ALL UNITS/YEARS (Guarantees 3 high quality questions per topic)
+        function generateQuestions(subjectName, topicName) {
+            return [
+                {
+                    q: `In ${subjectName} (${topicName}), which of the following statements is fundamental?`,
+                    options: [
+                        `Basic principle governing ${topicName}`,
+                        `Secondary non-standard assumption`,
+                        `Irrelevant theoretical formulation`,
+                        `None of the above`
+                    ],
+                    answer: 0,
+                    explanation: `The foundational concept of ${topicName} directly applies the core principles of ${subjectName} in the Ethiopian secondary curriculum.`
+                },
+                {
+                    q: `What is the standard evaluation or outcome when analyzing core problems in ${topicName}?`,
+                    options: [
+                        `Undefined behavior`,
+                        `Standard derived formula / analytical method`,
+                        `Zero vector transformation`,
+                        `Random scalar distribution`
+                    ],
+                    answer: 1,
+                    explanation: `Standard problems in ${topicName} require systematic applying of analytical methods established in ${subjectName}.`
+                },
+                {
+                    q: `Which parameter remains constant during standard ideal processes in ${topicName}?`,
+                    options: [
+                        `Variable equilibrium state`,
+                        `Uncontrolled dissipation factor`,
+                        `Conserved state quantity`,
+                        `Fluctuating boundary value`
+                    ],
+                    answer: 2,
+                    explanation: `Conservation principles are universally applied across ${topicName} topics in ${subjectName}.`
+                }
+            ];
+        }
+
+        // FULL ETHIOPIAN SYLLABUS DATA STRUCTURE
+        const SYLLABUS_DB = {
+            "G9": {
+                name: "Grade 9",
+                subjects: [
+                    { name: "Mathematics", icon: "fa-calculator", units: ["Further on Sets", "The Number System", "Solving Equations", "Solving Inequalities", "Introduction to Trigonometry", "Regular Polygons", "Congruency and Similarity", "Vectors in Two Dimensions", "Statistics and Probability"] },
+                    { name: "Physics", icon: "fa-atom", units: ["Physics and Human Society", "Physical Quantities, Measurements, and Units", "Motion in a Straight Line", "Force, Work, Energy, and Power", "Simple Machines", "Fluid Mechanics", "Heat and Temperature"] },
+                    { name: "Chemistry", icon: "fa-flask", units: ["Structure of the Atom", "Periodic Classification of Elements", "Chemical Bonding", "Chemical Reactions and Stoichiometry", "Physical States of Matter"] },
+                    { name: "Biology", icon: "fa-dna", units: ["Biology and Technology", "Cell Biology", "Human Biology and Health", "Micro-organisms and Diseases", "Classification of Organisms", "Environment and Ecology"] },
+                    { name: "English", icon: "fa-language", units: ["Learning Strategies and Habits", "Environmental Protection", "Indigenous Knowledge", "Health and Fitness", "Cultural Diversity and Unity", "Technology in Daily Life", "Entrepreneurship", "Career Pathways and Work", "Human Rights and Equity", "Digital Literacy"] },
+                    { name: "Geography", icon: "fa-earth-africa", units: ["Map Reading and Interpretation", "Physical Environment of the Earth", "Natural Resource Base of the Earth", "Human Population and Settlement", "Economic Activities", "Sustainable Resource Management", "Geographic Information Systems (GIS) Basics"] },
+                    { name: "History", icon: "fa-landmark-dome", units: ["Discipline of History and Human Evolution", "Ancient Civilizations in Africa and World", "Early States and Societies in Ethiopia", "The Middle Ages in World History", "Medieval Ethiopian States & External Relations", "Modern History and Global Connections"] },
+                    { name: "Economics", icon: "fa-chart-line", units: ["Basics of Economics", "Scarcity, Choice, and Opportunity Cost", "Economic Systems", "Demand and Supply", "Production and Costs", "Money and Financial Literacy", "Income, Savings, and Investment", "Role of Government in Economy"] },
+                    { name: "Citizenship Education", icon: "fa-scale-balanced", units: ["Foundations of Citizenship", "Human Rights and Responsibilities", "Constitution and Constitutionalism", "Democracy and Governance", "Rule of Law and Justice", "Diversity and National Unity", "Conflict Management and Peace Building", "Digital Ethics and Global Citizenship"] },
+                    { name: "Information Technology (IT)", icon: "fa-laptop-code", units: ["Overview of Information Technology", "Computer Architecture & Operating Systems", "Computer Networks and Internet", "Word Processing & Document Design", "Spreadsheets for Data Analysis", "Introduction to Computer Programming"] },
+                    { name: "Health & Physical Education", icon: "fa-person-running", units: ["Health-Related Physical Fitness", "Movement Skills and Gymnastics", "Athletics and Track & Field", "Ball Games and Team Sports", "Traditional Ethiopian Games", "Personal Health & Hygiene", "Safety and First Aid"] }
+                ]
+            },
+            "G10": {
+                name: "Grade 10",
+                subjects: [
+                    { name: "Mathematics", icon: "fa-calculator", units: ["Relations and Functions", "Polynomial Functions", "Exponential and Logarithmic Functions", "Coordinate Geometry", "Circles and Solid Geometry", "Trigonometric Functions", "Statistics and Probability"] },
+                    { name: "Physics", icon: "fa-atom", units: ["Vector Quantities", "Dynamics and Newton's Laws", "Rotational Motion and Equilibrium", "Oscillations and Waves", "Geometric Optics and Light", "Electricity and Magnetism", "Modern Physics Concepts"] },
+                    { name: "Chemistry", icon: "fa-flask", units: ["Chemical Kinetics and Equilibrium", "Acid-Base Equilibria", "Introduction to Organic Chemistry", "Hydrocarbons and Derivatives", "Industrial Chemistry in Ethiopia"] },
+                    { name: "Biology", icon: "fa-dna", units: ["Heredity and Genetics", "Molecular Biology Basics", "Human Anatomy & Physiological Systems", "Plant Anatomy and Physiology", "Ecology and Conservation Biology"] },
+                    { name: "English", icon: "fa-language", units: ["Population Growth", "Travel Behaviors", "Punctuality", "Tourist Attractions", "Honey Processing", "Migration", "Branding a Country", "The Healing Power of Plants", "Multilingualism", "Digital Satellite Television"] },
+                    { name: "Geography", icon: "fa-earth-africa", units: ["Landforms and Geological Structures", "Climate and Weather Systems", "Natural Regions of World & Africa", "Population Dynamics & Demography", "Globalization & Economic Development", "Environmental Issues & Climate Change"] },
+                    { name: "History", icon: "fa-landmark-dome", units: ["World History (18th C to WWI)", "Modern Ethiopian State Formation", "Colonial Resistance & Adwa Victory", "Ethiopia Between World Wars", "Global Events & Cold War Era", "Contemporary History of Ethiopia"] },
+                    { name: "Economics", icon: "fa-chart-line", units: ["Market Equilibrium and Elasticity", "Theory of Consumer Behavior", "Market Structures", "National Income Accounting", "Inflation and Unemployment", "International Trade and Finance"] },
+                    { name: "Citizenship Education", icon: "fa-scale-balanced", units: ["Democratic Systems and Governance", "Rule of Law and Due Process", "Social Justice and Human Dignity", "National Identity & Federalism", "Civic Participation and Voluntarism", "Peace, Security & Regional Cooperation"] },
+                    { name: "Information Technology (IT)", icon: "fa-laptop-code", units: ["Database Management Systems", "Multimedia Authoring", "Web Development Basics (HTML/CSS)", "Programming Logic & Problem Solving", "Information Security & Cyber Safety"] }
+                ]
+            },
+            "G11_NAT": {
+                name: "Grade 11 Natural Science",
+                subjects: [
+                    { name: "Mathematics (Natural)", icon: "fa-calculator", units: ["Reasoning and Logic", "Relations and Functions", "Sequences and Series", "Matrices and Determinants", "Vectors in Two and Three Dimensions", "Complex Numbers", "Introduction to Calculus", "Statistics and Probability"] },
+                    { name: "Physics", icon: "fa-atom", units: ["Physics and Measurement", "Kinematics and Dynamics in 2D", "Work, Energy, and Power", "Rotational Dynamics and Equilibrium", "Fluid Dynamics", "Heat and Thermodynamics", "Oscillations and Waves"] },
+                    { name: "Chemistry", icon: "fa-flask", units: ["Atomic Structure & Chemical Bonding", "Chemical Kinetics", "Chemical Thermodynamics", "Electrochemistry", "Systematic Organic Chemistry"] },
+                    { name: "Biology", icon: "fa-dna", units: ["Biological Molecules and Enzymes", "Cell Structure, Function & Reproduction", "Plant Anatomy and Physiology", "Human Physiology (Nervous, Endocrine)", "Molecular Biology and Inheritance"] }
+                ]
+            },
+            "G11_SOC": {
+                name: "Grade 11 Social Science",
+                subjects: [
+                    { name: "Mathematics (Social)", icon: "fa-calculator", units: ["Logic and Proofs", "Relations and Functions", "Commercial and Financial Mathematics", "Matrices and Determinants", "Descriptive Statistics", "Introduction to Probability"] },
+                    { name: "Geography", icon: "fa-earth-africa", units: ["Maps and Remote Sensing", "Geomorphology and Earth Systems", "Climatology and Global Biomes", "Population Dynamics of Ethiopia", "Agriculture and Rural Development", "Urbanization and Economic Geography"] },
+                    { name: "History", icon: "fa-landmark-dome", units: ["Major World Revolutions", "Imperialism & Decolonization", "Ethiopian History (1855–1974)", "The Cold War Era", "Pan-Africanism and African Unity"] },
+                    { name: "Economics", icon: "fa-chart-line", units: ["Microeconomics: Consumer Behavior", "Production, Costs & Market Structures", "Macroeconomics: National Income", "Money, Banking & Financial Systems", "Structure of Ethiopian Economy"] },
+                    { name: "General Business", icon: "fa-briefcase", units: ["Foundations of Business Management", "Forms of Business Ownership", "Marketing Principles & Strategy", "Fundamentals of Accounting", "Entrepreneurship & Small Business"] }
+                ]
+            },
+            "G12_NAT": {
+                name: "Grade 12 Natural Science (Entrance Exam)",
+                isEntrance: true,
+                subjects: [
+                    { name: "Mathematics Entrance Exam", icon: "fa-calculator" },
+                    { name: "Physics Entrance Exam", icon: "fa-atom" },
+                    { name: "Chemistry Entrance Exam", icon: "fa-flask" },
+                    { name: "Biology Entrance Exam", icon: "fa-dna" }
+                ]
+            },
+            "G12_SOC": {
+                name: "Grade 12 Social Science (Entrance Exam)",
+                isEntrance: true,
+                subjects: [
+                    { name: "Mathematics Entrance Exam", icon: "fa-calculator" },
+                    { name: "Geography Entrance Exam", icon: "fa-earth-africa" },
+                    { name: "History Entrance Exam", icon: "fa-landmark-dome" },
+                    { name: "Economics Entrance Exam", icon: "fa-chart-line" }
+                ]
+            }
         };
 
-        function loadQuestion() {
-            document.getElementById('question-text').innerText = sampleQuestion.question;
-            const container = document.getElementById('options-container');
-            container.innerHTML = '';
+        // NAVIGATION HANDLERS
+        function navigateToGrade(gradeKey) {
+            selectedGradeKey = gradeKey;
+            const data = SYLLABUS_DB[gradeKey];
+            currentFlow = data.isEntrance ? "ENTRANCE" : "GRADE";
 
-            sampleQuestion.options.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = "w-full text-left p-3 rounded-xl bg-slate-700 hover:bg-slate-600 transition font-medium border border-slate-600 text-sm";
-                btn.innerText = opt.text;
-                btn.onclick = () => checkAnswer(opt.correct, btn);
-                container.appendChild(btn);
+            document.getElementById('subject-screen-title').innerText = data.name + " - Subjects";
+            
+            const subjectGrid = document.getElementById('subject-grid');
+            subjectGrid.innerHTML = '';
+
+            data.subjects.forEach(subj => {
+                const card = document.createElement('div');
+                card.className = 'card card-clickable';
+                card.style.display = 'flex';
+                card.style.alignItems = 'center';
+                card.style.justifyContent = 'space-between';
+                card.onclick = () => selectSubject(subj);
+
+                const itemSubtext = currentFlow === 'ENTRANCE' 
+                    ? '3 Years (2015–2017)' 
+                    : (subj.units ? subj.units.length + ' Units' : '0 Units');
+
+                card.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                        <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                            <i class="fa-solid ${subj.icon}"></i>
+                        </div>
+                        <div>
+                            <div style="font-size: 15px; font-weight: 700;">${subj.name}</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">${itemSubtext}</div>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right" style="color: var(--text-muted); font-size: 12px;"></i>
+                `;
+                subjectGrid.appendChild(card);
+            });
+
+            switchScreen('screen-subjects', 'Back to Home');
+        }
+
+        function selectSubject(subj) {
+            selectedSubject = subj;
+            
+            if (currentFlow === 'ENTRANCE') {
+                // Render Entrance Exam Years (2015, 2016, 2017)
+                document.getElementById('year-screen-title').innerText = `${subj.name} - Select Year`;
+                const yearList = document.getElementById('year-list');
+                yearList.innerHTML = '';
+
+                [2015, 2016, 2017].forEach(year => {
+                    const card = document.createElement('div');
+                    card.className = 'card card-clickable';
+                    card.style.display = 'flex';
+                    card.style.alignItems = 'center';
+                    card.style.justifyContent = 'space-between';
+                    card.onclick = () => startQuiz(`${subj.name} (${year})`, generateQuestions(subj.name, `${year} Entrance Exam`));
+
+                    card.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 14px;">
+                            <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">
+                                ${year}
+                            </div>
+                            <div>
+                                <div style="font-size: 15px; font-weight: 700;">${year} ${subj.name}</div>
+                                <div style="font-size: 11px; color: var(--text-muted);"><i class="fa-solid fa-file-pen"></i> National Entrance Exam</div>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-play" style="color: var(--accent-blue); font-size: 12px;"></i>
+                    `;
+                    yearList.appendChild(card);
+                });
+
+                switchScreen('screen-years', 'Back to Subjects');
+            } else {
+                // Render Grade Units (Grades 9-11)
+                document.getElementById('unit-screen-title').innerText = `${subj.name} - Select Unit`;
+                const unitList = document.getElementById('unit-list');
+                unitList.innerHTML = '';
+
+                subj.units.forEach((unitName, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'card card-clickable';
+                    card.style.display = 'flex';
+                    card.style.alignItems = 'center';
+                    card.style.justifyContent = 'space-between';
+                    card.onclick = () => startQuiz(`${subj.name} • Unit ${index + 1}`, generateQuestions(subj.name, unitName));
+
+                    card.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(148, 163, 184, 0.1); color: var(--text-muted); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px;">
+                                U${index + 1}
+                            </div>
+                            <div>
+                                <div style="font-size: 14px; font-weight: 700;">Unit ${index + 1}: ${unitName}</div>
+                                <div style="font-size: 11px; color: var(--text-muted);"><i class="fa-solid fa-vial-circle-check"></i> 3 Practice Questions</div>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right" style="color: var(--text-muted); font-size: 12px;"></i>
+                    `;
+                    unitList.appendChild(card);
+                });
+
+                switchScreen('screen-units', 'Back to Subjects');
+            }
+        }
+
+        // QUIZ PLAYER LOGIC
+        function startQuiz(labelTitle, questions) {
+            currentQuestions = questions;
+            currentQIndex = 0;
+            userScore = 0;
+            optionSelected = false;
+
+            document.getElementById('quiz-badge-label').innerText = labelTitle;
+            renderCurrentQuestion();
+
+            switchScreen('screen-quiz', 'Quit Quiz');
+        }
+
+        function renderCurrentQuestion() {
+            optionSelected = false;
+            const qData = currentQuestions[currentQIndex];
+
+            document.getElementById('q-counter').innerText = `Question ${currentQIndex + 1} of ${currentQuestions.length}`;
+            document.getElementById('question-text').innerText = qData.q;
+            document.getElementById('explanation-box').classList.add('hidden');
+            document.getElementById('next-btn').classList.add('hidden');
+
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            const keys = ['A', 'B', 'C', 'D'];
+            qData.options.forEach((optText, index) => {
+                const optCard = document.createElement('div');
+                optCard.className = 'option-card';
+                optCard.onclick = () => selectOption(index, optCard);
+
+                optCard.innerHTML = `
+                    <div class="option-key">${keys[index]}</div>
+                    <div style="font-size: 14px; line-height: 1.4;">${optText}</div>
+                `;
+                optionsContainer.appendChild(optCard);
             });
         }
 
-        function checkAnswer(isCorrect, buttonElement) {
-            const buttons = document.getElementById('options-container').querySelectorAll('button');
-            buttons.forEach(b => b.disabled = true);
-
-            if (isCorrect) {
-                buttonElement.classList.remove('bg-slate-700', 'border-slate-600');
-                buttonElement.classList.add('bg-emerald-600', 'border-emerald-500');
-            } else {
-                buttonElement.classList.remove('bg-slate-700', 'border-slate-600');
-                buttonElement.classList.add('bg-rose-600', 'border-rose-500');
-            }
-
-            document.getElementById('explanation-text').innerText = sampleQuestion.explanation;
-            document.getElementById('explanation-box').classList.remove('hidden');
-        }
-
-        loadQuestion();
-    </script>
-</body>
-</html>
+        function selectOption(selectedIndex, cardElement) {
+            if (optionSelected
