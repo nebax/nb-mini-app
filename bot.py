@@ -25,19 +25,18 @@ def run_web():
 # --- Telegram Bot Command & Callback Handlers ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
-        [InlineKeyboardButton("📘 Grade 8 Ministry Exam Prep", callback_data="select_grade_8")],
-        [InlineKeyboardButton("📗 Grade 9 General Package", callback_data="select_grade_9")],
-        [InlineKeyboardButton("📙 Grade 10 General Package", callback_data="select_grade_10")],
+        [InlineKeyboardButton("📘 Grade 8 Ministry", callback_data="select_grade_8")],
+        [InlineKeyboardButton("📗 Grade 9 Student", callback_data="select_grade_9")],
+        [InlineKeyboardButton("📙 Grade 10 Student", callback_data="select_grade_10")],
         [InlineKeyboardButton("🧪 Grade 11 Natural Science", callback_data="select_grade_11_nat")],
         [InlineKeyboardButton("📜 Grade 11 Social Science", callback_data="select_grade_11_soc")],
         [InlineKeyboardButton("🔬 Grade 12 Natural Entrance", callback_data="select_grade_12_nat_entrance")],
         [InlineKeyboardButton("📚 Grade 12 Social Entrance", callback_data="select_grade_12_soc_entrance")],
-        [InlineKeyboardButton("🚀 Open NB Exam Hub (Mini App)", web_app=WebAppInfo(url=MINI_APP_URL))]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text(
         "👋 Welcome to **NB Tutorial Service**!\n\n"
-        "Please select your grade or stream below to view pricing and payment instructions:",
+        "Please select your grade and stream below👇🏽:",
         reply_markup=reply_markup,
         parse_mode="Markdown"
     )
@@ -71,7 +70,7 @@ async def grade_selection(update: Update, context: ContextTypes.DEFAULT_TYPE):
         access_info = f"Access to {selected_grade.replace('_', ' ').title()} Package"
 
     keyboard = InlineKeyboardMarkup([
-        [InlineKeyboardButton("💳 Payment Info (Telebirr / DestaPay)", callback_data="pay_info")]
+        [InlineKeyboardButton("💳 Payment Info (CBE / Telebirr)", callback_data="pay_info")]
     ])
     
     text = (
@@ -79,7 +78,7 @@ async def grade_selection(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"💰 **Price:** {price}\n"
         f"📚 **Includes:** {access_info}\n\n"
         "💳 **Payment Instructions:**\n"
-        "Please transfer the amount via telebirr or DestaPay, then send your payment receipt screenshot here!"
+        "Please transfer the amount via CBE or Telebirr, then send your payment receipt screenshot here!"
     )
     
     await query.message.edit_text(text, reply_markup=keyboard, parse_mode="Markdown")
@@ -90,8 +89,8 @@ async def payment_info(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     text = (
         "💳 **Official Payment Details**\n\n"
-        "• **telebirr Name:** Nebyu Endashaw\n"
-        "• **telebirr Number:** `0974539791`\n\n"
+        "• **Telebirr Name:** Nebyu Endashaw\n"
+        "• **Telebirr Number:** `0974539791`\n\n"
         "• **CBE Account Name:** Nebyu Endashaw\n"
         "• **CBE Account Number:** `1000724373686`\n\n"
         "📸 Once you complete the transfer, **send a screenshot of the receipt** right here in our chat so our admins can verify and approve your access!"
